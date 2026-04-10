@@ -8,7 +8,7 @@ namespace SCOTConfigEditor.UI
     {
         private System.ComponentModel.IContainer components = null;
 
-        // ── Colour palette (matches SCO Lane app) ─────────────────────────────────
+        // ── Colour palette ────────────────────────────────────────────────────────
         private static readonly Color ClrBack     = Color.FromArgb( 13,  17,  23);
         private static readonly Color ClrSurface  = Color.FromArgb( 22,  27,  34);
         private static readonly Color ClrSurface2 = Color.FromArgb( 33,  38,  45);
@@ -23,25 +23,56 @@ namespace SCOTConfigEditor.UI
         private TextBox txtConfigPath;
 
         // ── Navigation ────────────────────────────────────────────────────────────
-        private readonly List<Panel>  _navPanels  = new List<Panel>();
-        private readonly List<Panel>  _navAccents = new List<Panel>();
-        private readonly List<Label>  _navLabels  = new List<Label>();
-        private readonly List<Panel>  _contentPanels = new List<Panel>();
+        private readonly List<Panel> _navPanels   = new List<Panel>();
+        private readonly List<Panel> _navAccents  = new List<Panel>();
+        private readonly List<Label> _navLabels   = new List<Label>();
+        private readonly List<Panel> _contentPanels = new List<Panel>();
 
         // ── Tab 1: Scotopts.000 ───────────────────────────────────────────────────
-        private Label   lbl000Status;
-        private TextBox txt000ReceiptHeader;
-        private ComboBox cbo000AllowAltID;
+        private Label    lbl000Status;
+        // [SCOTSSF]
+        private TextBox  txt000ReceiptHeader;
+        private ComboBox cbo000Enable194Receipt, cbo000AllowRounding;
+        private ComboBox cbo000HeadCashierRequired, cbo000TenderReversalPrompt;
+        // [Operations]
+        private ComboBox cbo000AllowAltID, cbo000PartialIntegratedPINPad;
+        private ComboBox cbo000AllowContainerBtn, cbo000CustomerBagAllowed, cbo000SellBagsAtFinalize;
+        // [State]
+        private ComboBox cbo000StartupToLaneClosed, cbo000DualLanguage;
+        private ComboBox cbo000SayPrices, cbo000DisplayWeightsMeasures;
+        private ComboBox cbo000AllowLoyaltyCard, cbo000CouponSensor, cbo000AssistMode;
+        // [Tender]
         private readonly Dictionary<int, TextBox> txt000CashBack = new Dictionary<int, TextBox>();
+        private ComboBox cbo000OtherPayment;
+        // [AMPM]
         private ComboBox cbo000MemberIDRequired;
         private TextBox  txt000DummyMemberID;
 
         // ── Tab 2: Scotopts.dat ───────────────────────────────────────────────────
         private Label    lblDatStatus;
-        private ComboBox cboDatCash, cboDatCredit, cboDatDebit;
-        private ComboBox cboDatEBTFS, cboDatEBTCB, cboDatOther;
+        // [Tender]
+        private ComboBox cboDatCash, cboDatCredit, cboDatDebit, cboDatEBTFS, cboDatEBTCB, cboDatOther;
+        private ComboBox cboDatAllowCoupons, cboDatShowUseCoupons;
+        private ComboBox cboDatIsMotorizedMSR, cboDatCancelPartialEBT;
+        private TextBox  txtDatPrintReceiptOver, txtDatDenominations;
         private readonly Dictionary<int, TextBox> txtDatCashBack    = new Dictionary<int, TextBox>();
         private readonly Dictionary<int, TextBox> txtDatEBTCashBack = new Dictionary<int, TextBox>();
+        // [Operations]
+        private ComboBox cboDatAllowDegradedMode, cboDatAllowSkipBagging;
+        private ComboBox cboDatAllowContainerBtn, cboDatSellBagsAtFinalize;
+        private ComboBox cboDatGiftCardRedemption, cboDatDisplayGiftCard, cboDatMethodEmptyGiftCard;
+        private ComboBox cboDatShowVolumeControl, cboDatAllowCancelAll, cboDatSendSignature;
+        private TextBox  txtDatMaxCoupon;
+        // [State]
+        private ComboBox cboDatSayPrices, cboDatSayPhrases, cboDatLiveVideo;
+        private ComboBox cboDatAllowLoyaltyCard, cboDatCouponSensor;
+        private ComboBox cboDatStartupClosed, cboDatAssistMode;
+        private TextBox  txtDatMovieOnAttract;
+        // [Tracing]
+        private TextBox  txtDatTraceLevel;
+        // [TimeOut]
+        private TextBox txtDatTimeoutTender, txtDatTimeoutAttract, txtDatTimeoutThankYou;
+        private TextBox txtDatTimeoutItemSale, txtDatTimeoutTakeReceipt;
 
         // ── Tab 3: SCOTTend.dat ───────────────────────────────────────────────────
         private Label lblTendStatus;
@@ -76,7 +107,7 @@ namespace SCOTConfigEditor.UI
                     .GetManifestResourceStream("SCOTConfigEditor.app.ico")
                 ?? System.Reflection.Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("app.ico"));
-            this.ClientSize    = new Size(880, 720);
+            this.ClientSize    = new Size(920, 720);
             this.MinimumSize   = new Size(700, 500);
             this.MaximizeBox   = true;
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -88,7 +119,7 @@ namespace SCOTConfigEditor.UI
             var pnlHeader = new Panel
             {
                 Location  = new Point(0, 0),
-                Size      = new Size(880, 55),
+                Size      = new Size(920, 55),
                 BackColor = ClrSurface2,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -114,7 +145,7 @@ namespace SCOTConfigEditor.UI
             var pnlAccentLine = new Panel
             {
                 Location  = new Point(0, 55),
-                Size      = new Size(880, 2),
+                Size      = new Size(920, 2),
                 BackColor = ClrAccent,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -123,7 +154,7 @@ namespace SCOTConfigEditor.UI
             var pnlPathBar = new Panel
             {
                 Location  = new Point(0, 57),
-                Size      = new Size(880, 34),
+                Size      = new Size(920, 34),
                 BackColor = ClrSurface,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -140,17 +171,17 @@ namespace SCOTConfigEditor.UI
             txtConfigPath = new TextBox
             {
                 Location    = new Point(98, 7),
-                Size        = new Size(670, 22),
+                Size        = new Size(700, 22),
                 BackColor   = ClrInput,
                 ForeColor   = ClrInputFg,
                 BorderStyle = BorderStyle.FixedSingle,
-                Text        = @"C:\scot\config"
+                Text        = @"C:\scot\config",
+                Anchor      = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
-            txtConfigPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             var btnReload = new Button
             {
                 Text      = "Reload",
-                Location  = new Point(776, 6),
+                Location  = new Point(806, 6),
                 Size      = new Size(90, 22),
                 BackColor = ClrSurface2,
                 ForeColor = ClrMuted,
@@ -160,12 +191,12 @@ namespace SCOTConfigEditor.UI
                 Anchor    = AnchorStyles.Top | AnchorStyles.Right
             };
             btnReload.FlatAppearance.BorderColor = ClrBorder;
-            btnReload.Click += (s, e) => LoadAll();
+            btnReload.Click   += (s, e) => LoadAll();
             txtConfigPath.KeyDown += (s, e) => { if (e.KeyCode == Keys.Return) LoadAll(); };
             pnlPathBar.Controls.Add(txtConfigPath);
             pnlPathBar.Controls.Add(btnReload);
 
-            // ── Left nav (160px) ─────────────────────────────────────────────────
+            // ── Left nav ─────────────────────────────────────────────────────────
             var pnlNav = new Panel
             {
                 Location  = new Point(0, 91),
@@ -173,7 +204,6 @@ namespace SCOTConfigEditor.UI
                 BackColor = ClrSurface2,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
             };
-
             pnlNav.Controls.Add(new Label
             {
                 Text      = "FILES",
@@ -187,7 +217,7 @@ namespace SCOTConfigEditor.UI
             string[] navTitles = { "Scotopts.000", "Scotopts.dat", "SCOTTend.dat", "SSCOStrings", "SSCOUI Config" };
             for (int i = 0; i < navTitles.Length; i++)
             {
-                int idx = i;
+                int idx      = i;
                 var navPanel  = new Panel { Location = new Point(0, 30 + i * 40), Size = new Size(160, 38), BackColor = ClrSurface2, Cursor = Cursors.Hand };
                 var navAccent = new Panel { Location = new Point(0, 0), Size = new Size(3, 38), BackColor = Color.Transparent };
                 var navLabel  = new Label
@@ -215,18 +245,16 @@ namespace SCOTConfigEditor.UI
             var pnlContentArea = new Panel
             {
                 Location  = new Point(160, 91),
-                Size      = new Size(720, 629),
+                Size      = new Size(760, 629),
                 BackColor = ClrBack,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
-
-            // Build all 5 content panels
             for (int i = 0; i < 5; i++)
             {
                 var cp = new Panel
                 {
                     Location   = new Point(0, 0),
-                    Size       = new Size(720, 629),
+                    Size       = new Size(760, 629),
                     AutoScroll = true,
                     BackColor  = ClrBack,
                     Anchor     = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
@@ -241,14 +269,11 @@ namespace SCOTConfigEditor.UI
             BuildContentTend(_contentPanels[2]);
             BuildContentStrings(_contentPanels[3]);
             BuildContentXml(_contentPanels[4]);
-
             ActivateNav(0);
 
             this.Controls.AddRange(new Control[] { pnlHeader, pnlAccentLine, pnlPathBar, pnlNav, pnlContentArea });
             this.ResumeLayout(false);
         }
-
-        // ── Navigation ────────────────────────────────────────────────────────────
 
         private void ActivateNav(int index)
         {
@@ -257,8 +282,7 @@ namespace SCOTConfigEditor.UI
                 bool active = (i == index);
                 _navAccents[i].BackColor = active ? ClrAccent : Color.Transparent;
                 _navLabels[i].ForeColor  = active ? ClrText   : ClrMuted;
-                _navLabels[i].Font       = new Font("Segoe UI", 8.5f,
-                    active ? FontStyle.Bold : FontStyle.Regular);
+                _navLabels[i].Font       = new Font("Segoe UI", 8.5f, active ? FontStyle.Bold : FontStyle.Regular);
                 _contentPanels[i].Visible = active;
             }
         }
@@ -267,134 +291,273 @@ namespace SCOTConfigEditor.UI
 
         private void BuildContent000(Panel p)
         {
-            int fy = 8;
+            const int cw = 726;   // card width
+            const int lw = 220;   // label width
+            const int ix = 224;   // input x (label + 4)
+            const int iw = 70;    // Y/N combo width
+            const int cx = 400;   // col-2 label x
+            const int ix2 = cx + lw + 4;  // col-2 input x (~624)
+            const int rh = 26;    // row height
 
-            lbl000Status = MakeStatusLabel(12, fy, 680);
+            int fy = 8;
+            lbl000Status = MakeStatusLabel(12, fy, 720);
             p.Controls.Add(lbl000Status);
             fy += 24;
 
-            // Card: Receipt & Operations
-            var c1 = MakeCard("RECEIPT & OPERATIONS", 12, fy, 686, 76);
-            fy += 84;
+            // ── Card: SCOTSSF ─────────────────────────────────────────────────────
+            var cSSF = MakeCard("RECEIPT  [SCOTSSF]", 12, fy, cw, 106);
+            fy += 114;
 
-            txt000ReceiptHeader = MakeTextBox(148, 30, 480);
-            cbo000AllowAltID    = MakeYNCombo(148, 54, 70);
+            txt000ReceiptHeader          = MakeTextBox(ix, 30, 490);
+            cbo000Enable194Receipt       = MakeYNCombo(ix, 30 + rh, iw);
+            cbo000AllowRounding          = MakeYNCombo(ix2, 30 + rh, iw);
+            cbo000HeadCashierRequired    = MakeYNCombo(ix, 30 + rh * 2, iw);
+            cbo000TenderReversalPrompt   = MakeYNCombo(ix2, 30 + rh * 2, iw);
 
-            c1.Controls.AddRange(new Control[]
+            cSSF.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("Receipt Header:",   12, 32, 130), txt000ReceiptHeader,
-                MakeFieldLabel("Allow Alt ID Entry:", 12, 56, 130), cbo000AllowAltID,
+                FL("Receipt Header:",                       12,  32, lw), txt000ReceiptHeader,
+                FL("Enable 194 Receipt:",                   12,  56 + 2, lw), cbo000Enable194Receipt,
+                FL("Allow Rounding:",                      cx,  56 + 2, lw), cbo000AllowRounding,
+                FL("Head Cashier Req. for Cash Mgmt:",     12,  82 + 2, lw), cbo000HeadCashierRequired,
+                FL("Tender Reversal Prompt:",              cx,  82 + 2, lw), cbo000TenderReversalPrompt,
             });
 
-            // Card: CashBack Amounts
-            var c2 = MakeCard("CASHBACK AMOUNTS  (Scotopts.000 [Tender])", 12, fy, 686, 96);
+            // ── Card: Operations ──────────────────────────────────────────────────
+            var cOps = MakeCard("OPERATIONS  [Operations]", 12, fy, cw, 106);
+            fy += 114;
+
+            cbo000AllowAltID             = MakeYNCombo(ix,  30, iw);
+            cbo000PartialIntegratedPINPad = MakeYNCombo(ix2, 30, iw);
+            cbo000AllowContainerBtn      = MakeYNCombo(ix,  30 + rh, iw);
+            cbo000CustomerBagAllowed     = MakeYNCombo(ix2, 30 + rh, iw);
+            cbo000SellBagsAtFinalize     = MakeYNCombo(ix,  30 + rh * 2, iw);
+
+            cOps.Controls.AddRange(new Control[]
+            {
+                FL("Allow Alt ID Entry:",                  12,  32, lw), cbo000AllowAltID,
+                FL("Partial Integrated PINPad (PIP):",    cx,  32, lw), cbo000PartialIntegratedPINPad,
+                FL("Allow Bag/Box Btn (weight alert):",   12,  58, lw), cbo000AllowContainerBtn,
+                FL("Allow Customer Own Bag:",             cx,  58, lw), cbo000CustomerBagAllowed,
+                FL("Sell Bags at Finalize:",              12,  84, lw), cbo000SellBagsAtFinalize,
+            });
+
+            // ── Card: State ───────────────────────────────────────────────────────
+            var cState = MakeCard("STATE / DISPLAY  [State]", 12, fy, cw, 132);
+            fy += 140;
+
+            cbo000StartupToLaneClosed   = MakeYNCombo(ix,  30, iw);
+            cbo000DualLanguage          = MakeYNCombo(ix2, 30, iw);
+            cbo000SayPrices             = MakeYNCombo(ix,  30 + rh, iw);
+            cbo000DisplayWeightsMeasures = MakeYNCombo(ix2, 30 + rh, iw);
+            cbo000AllowLoyaltyCard      = MakeYNCombo(ix,  30 + rh * 2, iw);
+            cbo000CouponSensor          = MakeYNCombo(ix2, 30 + rh * 2, iw);
+            cbo000AssistMode            = MakeYNCombo(ix,  30 + rh * 3, iw);
+
+            cState.Controls.AddRange(new Control[]
+            {
+                FL("Startup to Lane Closed:",             12,  32, lw), cbo000StartupToLaneClosed,
+                FL("Dual Language:",                     cx,  32, lw), cbo000DualLanguage,
+                FL("Say Prices (audio):",                12,  58, lw), cbo000SayPrices,
+                FL("Display Weights & Measures:",        cx,  58, lw), cbo000DisplayWeightsMeasures,
+                FL("Allow Loyalty Card:",                12,  84, lw), cbo000AllowLoyaltyCard,
+                FL("Coupon Sensor (show insert screen):", cx, 84, lw), cbo000CouponSensor,
+                FL("Assist Mode:",                       12, 110, lw), cbo000AssistMode,
+            });
+
+            // ── Card: CashBack ────────────────────────────────────────────────────
+            var cCB = MakeCard("CASHBACK AMOUNTS  [Tender]", 12, fy, cw, 96);
             fy += 104;
 
-            int[] cbRows = { 30, 54, 78 };
-            int[][] cbCols = { new[] { 1, 2 }, new[] { 3, 4 }, new[] { 5, 6 } };
-            int[] colX = { 12, 190, 368 };
-
-            for (int row = 0; row < cbRows.Length; row++)
+            // 2 columns of 3 rows
+            int[][] cbPairs = { new[] { 1, 2 }, new[] { 3, 4 }, new[] { 5, 6 } };
+            int[] rys = { 30, 54, 78 };
+            for (int r = 0; r < 3; r++)
             {
-                for (int col = 0; col < 2; col++)
+                for (int c = 0; c < 2; c++)
                 {
-                    int n = cbCols[row][col];
-                    int x = colX[col * 1 == 0 ? 0 : col == 1 ? 1 : 2];
-                    x = col == 0 ? 12 : 190;
-                    var tb = MakeTextBox(x + 80, cbRows[row], 72);
+                    int n  = cbPairs[r][c];
+                    int bx = c == 0 ? 12 : 370;
+                    var tb = MakeTextBox(bx + 86, rys[r], 70);
                     txt000CashBack[n] = tb;
-                    c2.Controls.Add(MakeFieldLabel("CashBack" + n + ":", x, cbRows[row] + 2, 78));
-                    c2.Controls.Add(tb);
+                    cCB.Controls.Add(FL("CashBack" + n + ":", bx, rys[r] + 2, 84));
+                    cCB.Controls.Add(tb);
                 }
             }
 
-            // Card: AMPM / Loyalty
-            var c3 = MakeCard("AMPM / LOYALTY", 12, fy, 686, 76);
-            fy += 84;
+            // Other Payment alongside CashBack card
+            cCB.Controls.Add(FL("Other Payment:", 580, 32, 100));
+            cbo000OtherPayment = MakeYNCombo(686, 30, iw);
+            cCB.Controls.Add(cbo000OtherPayment);
 
-            cbo000MemberIDRequired = MakeYNCombo(148, 30, 70);
-            txt000DummyMemberID    = MakeTextBox(148, 54, 120);
+            // ── Card: AMPM ────────────────────────────────────────────────────────
+            var cAMPM = MakeCard("AMPM / LOYALTY  [AMPM]", 12, fy, cw, 56);
+            fy += 64;
 
-            c3.Controls.AddRange(new Control[]
+            cbo000MemberIDRequired = MakeYNCombo(ix, 30, iw);
+            txt000DummyMemberID    = MakeTextBox(ix2, 30, 120);
+
+            cAMPM.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("Member ID Required:", 12, 32, 130), cbo000MemberIDRequired,
-                MakeFieldLabel("Dummy Member ID:",    12, 56, 130), txt000DummyMemberID,
+                FL("Member ID Required:",    12, 32, lw), cbo000MemberIDRequired,
+                FL("Dummy Member ID:",      cx, 32, lw), txt000DummyMemberID,
             });
 
             var btn = MakeSaveButton("Save  Scotopts.000", 12, fy);
             btn.Click += btn000Save_Click;
-
-            p.Controls.AddRange(new Control[] { c1, c2, c3, btn });
+            p.Controls.AddRange(new Control[] { cSSF, cOps, cState, cCB, cAMPM, btn });
         }
 
         // ── Content 1: Scotopts.dat ───────────────────────────────────────────────
 
         private void BuildContentDat(Panel p)
         {
-            int fy = 8;
+            const int cw  = 726;
+            const int lw  = 210;
+            const int ix  = 214;
+            const int iw  = 70;
+            const int cx  = 390;
+            const int ix2 = cx + lw + 4;
 
-            lblDatStatus = MakeStatusLabel(12, fy, 680);
+            int fy = 8;
+            lblDatStatus = MakeStatusLabel(12, fy, 720);
             p.Controls.Add(lblDatStatus);
             fy += 24;
 
-            // Card: Tender Allowed
-            var cAllow = MakeCard("TENDER ALLOWED", 12, fy, 686, 96);
-            fy += 104;
+            // ── Card: Tender Allowed ──────────────────────────────────────────────
+            var cAllow = MakeCard("TENDER ALLOWED  [Tender]", 12, fy, cw, 132);
+            fy += 140;
 
-            cboDatCash    = MakeYNCombo(120, 30, 60);
-            cboDatCredit  = MakeYNCombo(358, 30, 60);
-            cboDatDebit   = MakeYNCombo(596, 30, 60);
-            cboDatEBTFS   = MakeYNCombo(120, 58, 60);
-            cboDatEBTCB   = MakeYNCombo(358, 58, 60);
-            cboDatOther   = MakeYNCombo(596, 58, 60);
+            cboDatCash    = MakeYNCombo(ix,  30, iw);
+            cboDatCredit  = MakeYNCombo(ix2 - 50, 30, iw);
+            cboDatDebit   = MakeYNCombo(ix2 + 100, 30, iw);
+            cboDatEBTFS   = MakeYNCombo(ix,  56, iw);
+            cboDatEBTCB   = MakeYNCombo(ix2 - 50, 56, iw);
+            cboDatOther   = MakeYNCombo(ix2 + 100, 56, iw);
+
+            cboDatAllowCoupons   = MakeAONCombo(ix, 82, 70);
+            cboDatShowUseCoupons = MakeYNCombo(ix2, 82, iw);
+            cboDatIsMotorizedMSR = MakeYNCombo(ix,  108, iw);
+            cboDatCancelPartialEBT = MakeYNCombo(ix2, 108, iw);
 
             cAllow.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("Cash Allowed:",    12,  32, 106), cboDatCash,
-                MakeFieldLabel("Credit Allowed:", 248,  32, 108), cboDatCredit,
-                MakeFieldLabel("Debit Allowed:",  486,  32, 108), cboDatDebit,
-                MakeFieldLabel("EBT FS Allowed:",  12,  60, 106), cboDatEBTFS,
-                MakeFieldLabel("EBT CB Allowed:", 248,  60, 108), cboDatEBTCB,
-                MakeFieldLabel("Other Payment:",  486,  60, 108), cboDatOther,
+                FL("Cash Allowed:",           12,  32, lw - 20), cboDatCash,
+                FL("Credit Allowed:",        265,  32, lw - 20), cboDatCredit,
+                FL("Debit Allowed:",         505,  32, lw - 20), cboDatDebit,
+                FL("EBT FS Allowed:",         12,  58, lw - 20), cboDatEBTFS,
+                FL("EBT Cash Benefit:",      265,  58, lw - 20), cboDatEBTCB,
+                FL("Other Payment:",         505,  58, lw - 20), cboDatOther,
+                FL("Allow Coupons (A=All, O=Assist, N=None):", 12,  84, 200), cboDatAllowCoupons,
+                FL("Show Use Coupons btn:",  cx,  84, lw), cboDatShowUseCoupons,
+                FL("Motorized Card Reader:", 12, 110, lw), cboDatIsMotorizedMSR,
+                FL("Cancel With Partial EBT:", cx, 110, lw), cboDatCancelPartialEBT,
             });
 
-            // Card: CashBack (regular)
-            var cCB = MakeCard("CASHBACK AMOUNTS  (Regular, [Tender])", 12, fy, 686, 106);
-            fy += 114;
+            // ── Card: Tender Settings ─────────────────────────────────────────────
+            var cTSet = MakeCard("TENDER SETTINGS  [Tender]", 12, fy, cw, 56);
+            fy += 64;
 
+            txtDatPrintReceiptOver = MakeTextBox(ix, 30, 80);
+            txtDatDenominations    = MakeTextBox(ix2, 30, 200);
+
+            cTSet.Controls.AddRange(new Control[]
+            {
+                FL("Print Receipt Over $ (0=always):", 12, 32, lw), txtDatPrintReceiptOver,
+                FL("Denominations:",                  cx, 32, lw), txtDatDenominations,
+            });
+
+            // ── Card: CashBack (regular) ──────────────────────────────────────────
+            var cCB = MakeCard("CASHBACK AMOUNTS  [Tender]", 12, fy, cw, 106);
+            fy += 114;
             AddCashBackGrid(cCB, txtDatCashBack, "CashBack", 1, 11);
 
-            // Card: EBT CashBack
-            var cEBT = MakeCard("CASHBACK AMOUNTS  (EBT, [Tender])", 12, fy, 686, 106);
+            // ── Card: EBT CashBack ────────────────────────────────────────────────
+            var cEBT = MakeCard("EBT CASHBACK AMOUNTS  [Tender]", 12, fy, cw, 106);
+            fy += 114;
+            AddCashBackGrid(cEBT, txtDatEBTCashBack, "EBTCashBack", 1, 11);
+
+            // ── Card: Operations ──────────────────────────────────────────────────
+            var cOps = MakeCard("OPERATIONS  [Operations]", 12, fy, cw, 184);
+            fy += 192;
+
+            cboDatAllowDegradedMode  = MakeYNCombo(ix, 30, iw);
+            cboDatAllowSkipBagging   = MakeYNCombo(ix2, 30, iw);
+            cboDatAllowContainerBtn  = MakeYNCombo(ix, 56, iw);
+            cboDatSellBagsAtFinalize = MakeYNCombo(ix2, 56, iw);
+            cboDatShowVolumeControl  = MakeYNCombo(ix, 82, iw);
+            cboDatAllowCancelAll     = MakeYNCombo(ix2, 82, iw);
+            cboDatSendSignature      = MakeYNCombo(ix, 108, iw);
+            txtDatMaxCoupon          = MakeTextBox(ix2, 108, 80);
+            // Gift card row
+            cboDatGiftCardRedemption  = Make012Combo(ix, 134, 120);
+            cboDatDisplayGiftCard     = MakeYNCombo(ix2, 134, iw);
+            cboDatMethodEmptyGiftCard = Make012Combo(ix, 160, 120);
+
+            cOps.Controls.AddRange(new Control[]
+            {
+                FL("Allow Degraded Mode:",               12,  32, lw), cboDatAllowDegradedMode,
+                FL("Allow Skip Bagging Button:",         cx,  32, lw), cboDatAllowSkipBagging,
+                FL("Allow Bag/Box Btn (weight alert):",  12,  58, lw), cboDatAllowContainerBtn,
+                FL("Sell Bags at Finalize:",             cx,  58, lw), cboDatSellBagsAtFinalize,
+                FL("Show Volume Control (attract):",     12,  84, lw), cboDatShowVolumeControl,
+                FL("Allow Cancel All:",                  cx,  84, lw), cboDatAllowCancelAll,
+                FL("Send Signature Data to TB:",         12, 110, lw), cboDatSendSignature,
+                FL("Max Coupon Value (100=$1):",         cx, 110, lw), txtDatMaxCoupon,
+                FL("Gift Card (0=Off,1=Scan,2=Swipe):", 12, 136, lw), cboDatGiftCardRedemption,
+                FL("Display Gift Card Balance:",         cx, 136, lw), cboDatDisplayGiftCard,
+                FL("Empty Gift Card: 0=No,1=Slot,2=Cashier:", 12, 162, lw), cboDatMethodEmptyGiftCard,
+            });
+
+            // ── Card: State / Display ─────────────────────────────────────────────
+            var cState = MakeCard("STATE / DISPLAY  [State]", 12, fy, cw, 132);
+            fy += 140;
+
+            cboDatSayPrices        = MakeYNCombo(ix, 30, iw);
+            cboDatSayPhrases       = MakeYNCombo(ix2, 30, iw);
+            cboDatAllowLoyaltyCard = MakeYNCombo(ix, 56, iw);
+            cboDatCouponSensor     = MakeYNCombo(ix2, 56, iw);
+            cboDatStartupClosed    = MakeYNCombo(ix, 82, iw);
+            cboDatAssistMode       = MakeYNCombo(ix2, 82, iw);
+            cboDatLiveVideo        = MakeYNCombo(ix, 108, iw);
+            txtDatMovieOnAttract   = MakeTextBox(ix2, 108, 200);
+
+            cState.Controls.AddRange(new Control[]
+            {
+                FL("Say Prices (audio):",            12,  32, lw), cboDatSayPrices,
+                FL("Say Phrases (audio):",           cx,  32, lw), cboDatSayPhrases,
+                FL("Allow Loyalty Card:",            12,  58, lw), cboDatAllowLoyaltyCard,
+                FL("Coupon Sensor (insert screen):", cx,  58, lw), cboDatCouponSensor,
+                FL("Startup to Lane Closed:",        12,  84, lw), cboDatStartupClosed,
+                FL("Assist Mode:",                   cx,  84, lw), cboDatAssistMode,
+                FL("Live Video:",                    12, 110, lw), cboDatLiveVideo,
+                FL("Attract Screen Video File:",     cx, 110, lw), txtDatMovieOnAttract,
+            });
+
+            // ── Card: Tracing + Timeouts ──────────────────────────────────────────
+            var cMisc = MakeCard("TRACING & TIMEOUTS  [Tracing] [TimeOut]", 12, fy, cw, 106);
             fy += 114;
 
-            AddCashBackGrid(cEBT, txtDatEBTCashBack, "EBTCashBack", 1, 11);
+            txtDatTraceLevel       = MakeTextBox(ix,  30, 60);
+            txtDatTimeoutTender    = MakeTextBox(ix,  56, 60);
+            txtDatTimeoutAttract   = MakeTextBox(ix2, 56, 60);
+            txtDatTimeoutThankYou  = MakeTextBox(ix,  82, 60);
+            txtDatTimeoutItemSale  = MakeTextBox(ix2, 82, 60);
+            txtDatTimeoutTakeReceipt = MakeTextBox(cx + lw + 4, 30, 60);
+
+            cMisc.Controls.AddRange(new Control[]
+            {
+                FL("Trace Level (0-7, 6=verbose):", 12, 32, lw), txtDatTraceLevel,
+                FL("Take Receipt timeout (sec):",   cx, 32, lw), txtDatTimeoutTakeReceipt,
+                FL("Tender timeout (sec):",         12, 58, lw), txtDatTimeoutTender,
+                FL("Attract timeout (sec):",        cx, 58, lw), txtDatTimeoutAttract,
+                FL("Thank You timeout (sec):",      12, 84, lw), txtDatTimeoutThankYou,
+                FL("Item Sale In Progress (sec, 0=no timeout):", cx, 84, lw - 10), txtDatTimeoutItemSale,
+            });
 
             var btn = MakeSaveButton("Save  Scotopts.dat", 12, fy);
             btn.Click += btnDatSave_Click;
-
-            p.Controls.AddRange(new Control[] { cAllow, cCB, cEBT, btn });
-        }
-
-        private static void AddCashBackGrid(Panel card, Dictionary<int, TextBox> dict,
-            string prefix, int start, int end)
-        {
-            // 4 per row layout
-            int[] xs = { 12, 180, 348, 516 };
-            int labelW = 84, inputW = 64, rowH = 26;
-            int row = 0, col = 0;
-
-            for (int i = start; i <= end; i++)
-            {
-                int y = 30 + row * rowH;
-                int x = xs[col];
-                var tb = MakeTextBox(x + labelW + 2, y, inputW);
-                dict[i] = tb;
-                card.Controls.Add(MakeFieldLabel(prefix + i + ":", x, y + 2, labelW));
-                card.Controls.Add(tb);
-                col++;
-                if (col >= 4) { col = 0; row++; }
-            }
+            p.Controls.AddRange(new Control[] { cAllow, cTSet, cCB, cEBT, cOps, cState, cMisc, btn });
         }
 
         // ── Content 2: SCOTTend.dat ───────────────────────────────────────────────
@@ -402,67 +565,44 @@ namespace SCOTConfigEditor.UI
         private void BuildContentTend(Panel p)
         {
             int fy = 8;
-
-            lblTendStatus = MakeStatusLabel(12, fy, 680);
+            lblTendStatus = MakeStatusLabel(12, fy, 720);
             p.Controls.Add(lblTendStatus);
-            fy += 24;
+            fy += 28;
 
-            // Table header
-            int[] colX2   = { 12, 60, 240, 318, 398, 476 };
-            int[] colW2   = { 44, 178, 76, 78, 76, 76 };
-            string[] hdrs = { "Btn", "Text", "Type", "Cash Back", "Need PIN", "" };
-
-            var hdrPanel = new Panel
-            {
-                Location  = new Point(12, fy),
-                Size      = new Size(686, 22),
-                BackColor = ClrSurface2
-            };
-            for (int h = 0; h < hdrs.Length - 1; h++)
-                hdrPanel.Controls.Add(new Label
+            // Column headers
+            int[] colX = { 12, 58, 248, 328, 412, 494 };
+            int[] colW = { 42, 188, 78,  82,  80,  80  };
+            string[] hdrs = { "Btn", "Text", "Type", "Cash Back", "Need PIN" };
+            var hdr = new Panel { Location = new Point(12, fy), Size = new Size(726, 22), BackColor = ClrSurface2 };
+            for (int h = 0; h < hdrs.Length; h++)
+                hdr.Controls.Add(new Label
                 {
                     Text      = hdrs[h],
-                    Location  = new Point(colX2[h], 0),
-                    Size      = new Size(colW2[h], 22),
+                    Location  = new Point(colX[h], 0),
+                    Size      = new Size(colW[h], 22),
                     Font      = new Font("Segoe UI", 7.5f, FontStyle.Bold),
                     ForeColor = ClrMuted,
                     BackColor = Color.Transparent,
                     TextAlign = System.Drawing.ContentAlignment.MiddleLeft
                 });
-            p.Controls.Add(hdrPanel);
+            p.Controls.Add(hdr);
             fy += 24;
 
-            var card = MakeCard("TENDER BUTTONS", 12, fy, 686, 11 * 28 + 32);
-            fy += 11 * 28 + 40;
-
             int[] buttons = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12 };
+            var card = MakeCard("TENDER BUTTONS", 12, fy, 726, buttons.Length * 28 + 32);
+            fy += buttons.Length * 28 + 40;
+
             for (int r = 0; r < buttons.Length; r++)
             {
                 int b  = buttons[r];
                 int ry = 30 + r * 28;
-
-                var lblBtn = new Label
-                {
-                    Text      = b.ToString(),
-                    Location  = new Point(colX2[0], ry + 2),
-                    Size      = new Size(colW2[0], 22),
-                    Font      = new Font("Segoe UI", 8.5f),
-                    ForeColor = ClrAccent,
-                    BackColor = Color.Transparent,
-                    TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-                };
-
-                var txtTxt  = MakeTextBox(colX2[1], ry, colW2[1] - 4);
-                var txtType = MakeTextBox(colX2[2], ry, colW2[2] - 4);
-                var txtCB   = MakeTextBox(colX2[3], ry, colW2[3] - 4);
-                var txtPin  = MakeTextBox(colX2[4], ry, colW2[4] - 4);
-
-                _tendText[b]     = txtTxt;
-                _tendType[b]     = txtType;
-                _tendCashBack[b] = txtCB;
-                _tendNeedPin[b]  = txtPin;
-
-                card.Controls.AddRange(new Control[] { lblBtn, txtTxt, txtType, txtCB, txtPin });
+                var lbl = new Label { Text = b.ToString(), Location = new Point(colX[0], ry + 2), Size = new Size(colW[0], 22), Font = new Font("Segoe UI", 8.5f), ForeColor = ClrAccent, BackColor = Color.Transparent, TextAlign = System.Drawing.ContentAlignment.MiddleLeft };
+                var tTxt  = MakeTextBox(colX[1], ry, colW[1] - 4);
+                var tType = MakeTextBox(colX[2], ry, colW[2] - 4);
+                var tCB   = MakeTextBox(colX[3], ry, colW[3] - 4);
+                var tPin  = MakeTextBox(colX[4], ry, colW[4] - 4);
+                _tendText[b] = tTxt; _tendType[b] = tType; _tendCashBack[b] = tCB; _tendNeedPin[b] = tPin;
+                card.Controls.AddRange(new Control[] { lbl, tTxt, tType, tCB, tPin });
             }
 
             var btn = MakeSaveButton("Save  SCOTTend.dat", 12, fy);
@@ -475,12 +615,10 @@ namespace SCOTConfigEditor.UI
         private void BuildContentStrings(Panel p)
         {
             int fy = 8;
-
-            lblStrStatus = MakeStatusLabel(12, fy, 680);
+            lblStrStatus = MakeStatusLabel(12, fy, 720);
             p.Controls.Add(lblStrStatus);
             fy += 24;
 
-            // All string keys in the file
             string[] strKeys =
             {
                 "ScotApp_3", "ScotApp_4", "ScotApp_13", "ScotApp_22",
@@ -504,16 +642,16 @@ namespace SCOTConfigEditor.UI
                 "TransDiscount1ButtonText", "TransDiscount2ButtonText"
             };
 
-            int cardHeight = strKeys.Length * 26 + 34;
-            var card = MakeCard("CUSTOM STRINGS  (SSCOStrings.en-US.custom.dat)", 12, fy, 686, cardHeight);
-            fy += cardHeight + 8;
+            int cardH = strKeys.Length * 26 + 34;
+            var card = MakeCard("CUSTOM STRINGS  (SSCOStrings.en-US.custom.dat)", 12, fy, 726, cardH);
+            fy += cardH + 8;
 
             for (int i = 0; i < strKeys.Length; i++)
             {
                 int ry = 30 + i * 26;
-                var tb = MakeTextBox(148, ry, 520);
+                var tb = MakeTextBox(148, ry, 560);
                 _stringBoxes[strKeys[i]] = tb;
-                card.Controls.Add(MakeFieldLabel(strKeys[i] + ":", 12, ry + 2, 134));
+                card.Controls.Add(FL(strKeys[i] + ":", 12, ry + 2, 134));
                 card.Controls.Add(tb);
             }
 
@@ -526,55 +664,51 @@ namespace SCOTConfigEditor.UI
 
         private void BuildContentXml(Panel p)
         {
-            int fy = 8;
+            const int lw = 200;
+            const int ix = 204;
 
-            lblXmlStatus = MakeStatusLabel(12, fy, 680);
+            int fy = 8;
+            lblXmlStatus = MakeStatusLabel(12, fy, 720);
             p.Controls.Add(lblXmlStatus);
             fy += 24;
 
-            // Card: Auto Restart
-            var cRestart = MakeCard("AUTO RESTART", 12, fy, 686, 76);
+            var cRestart = MakeCard("AUTO RESTART  [SSCOUI.Properties.Settings]", 12, fy, 726, 76);
             fy += 84;
 
-            txtXmlAutoRestart  = MakeTextBox(160, 30, 506);
-            txtXmlRestartStates = MakeTextBox(160, 54, 506);
-
+            txtXmlAutoRestart  = MakeTextBox(ix, 30, 506);
+            txtXmlRestartStates = MakeTextBox(ix, 54, 506);
             cRestart.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("AutoRestartOptions:",    12, 32, 146), txtXmlAutoRestart,
-                MakeFieldLabel("AutoRestartStates:",     12, 56, 146), txtXmlRestartStates,
+                FL("AutoRestartOptions:", 12, 32, lw), txtXmlAutoRestart,
+                FL("AutoRestart States:", 12, 56, lw), txtXmlRestartStates,
             });
 
-            // Card: Display
-            var cDisplay = MakeCard("DISPLAY SETTINGS", 12, fy, 686, 96);
+            var cDisplay = MakeCard("DISPLAY  [SSCOUI.Properties.Settings]", 12, fy, 726, 96);
             fy += 104;
 
-            cboXmlShowGoToPOS  = MakeTFCombo(160, 30, 80);
-            cboXmlShowCursor   = MakeTFCombo(160, 54, 80);
-            cboXmlLiveVideo    = MakeTFCombo(160, 78, 80);
-
+            cboXmlShowGoToPOS = MakeTFCombo(ix, 30, 80);
+            cboXmlShowCursor  = MakeTFCombo(ix, 54, 80);
+            cboXmlLiveVideo   = MakeTFCombo(ix, 78, 80);
             cDisplay.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("Show GoToPOS Widget:", 12, 32, 146), cboXmlShowGoToPOS,
-                MakeFieldLabel("Show Cursor:",          12, 56, 146), cboXmlShowCursor,
-                MakeFieldLabel("Live Video (NG UI):",   12, 80, 146), cboXmlLiveVideo,
+                FL("Show Go-To-POS Widget:", 12, 32, lw), cboXmlShowGoToPOS,
+                FL("Show Cursor:",           12, 56, lw), cboXmlShowCursor,
+                FL("Next Gen UI Live Video:", 12, 80, lw), cboXmlLiveVideo,
             });
 
-            // Card: Images
-            var cImages = MakeCard("IMAGE PATHS  (relative or absolute)", 12, fy, 686, 120);
+            var cImages = MakeCard("IMAGE PATHS  [SSCOUI.Properties.Settings]", 12, fy, 726, 120);
             fy += 128;
 
-            txtXmlLogoImage   = MakeTextBox(160, 30, 506);
-            txtXmlBgImage     = MakeTextBox(160, 54, 506);
-            txtXmlWelcomeImage = MakeTextBox(160, 78, 506);
-            txtXmlFinishImage  = MakeTextBox(160, 102, 506);
-
+            txtXmlLogoImage    = MakeTextBox(ix, 30,  506);
+            txtXmlBgImage      = MakeTextBox(ix, 54,  506);
+            txtXmlWelcomeImage = MakeTextBox(ix, 78,  506);
+            txtXmlFinishImage  = MakeTextBox(ix, 102, 506);
             cImages.Controls.AddRange(new Control[]
             {
-                MakeFieldLabel("Logo Image:",       12, 32,  146), txtXmlLogoImage,
-                MakeFieldLabel("Background Image:", 12, 56,  146), txtXmlBgImage,
-                MakeFieldLabel("Welcome Image:",    12, 80,  146), txtXmlWelcomeImage,
-                MakeFieldLabel("Finish Image:",     12, 104, 146), txtXmlFinishImage,
+                FL("Logo Image:",       12, 32, lw), txtXmlLogoImage,
+                FL("Background Image:", 12, 56, lw), txtXmlBgImage,
+                FL("Welcome Image:",    12, 80, lw), txtXmlWelcomeImage,
+                FL("Finish Image:",     12, 104, lw), txtXmlFinishImage,
             });
 
             var btn = MakeSaveButton("Save  SSCOUI.exe.config", 12, fy);
@@ -588,97 +722,67 @@ namespace SCOTConfigEditor.UI
         {
             var panel = new Panel { Location = new Point(x, y), Size = new Size(width, height), BackColor = ClrSurface };
             panel.Controls.Add(new Panel { Location = new Point(0, 0), Size = new Size(3, height), BackColor = ClrAccent });
-            panel.Controls.Add(new Label
-            {
-                Text      = title,
-                Location  = new Point(12, 5),
-                Size      = new Size(width - 20, 16),
-                Font      = new Font("Segoe UI", 7f, FontStyle.Bold),
-                ForeColor = ClrMuted,
-                BackColor = Color.Transparent,
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            });
-            panel.Controls.Add(new Panel
-            {
-                Location  = new Point(12, 22),
-                Size      = new Size(width - 15, 1),
-                BackColor = ClrBorder
-            });
+            panel.Controls.Add(new Label { Text = title, Location = new Point(12, 5), Size = new Size(width - 20, 16), Font = new Font("Segoe UI", 7f, FontStyle.Bold), ForeColor = ClrMuted, BackColor = Color.Transparent, TextAlign = System.Drawing.ContentAlignment.MiddleLeft });
+            panel.Controls.Add(new Panel { Location = new Point(12, 22), Size = new Size(width - 15, 1), BackColor = ClrBorder });
             return panel;
         }
 
-        private static Label MakeFieldLabel(string text, int x, int y, int width)
-            => new Label
-            {
-                Text      = text,
-                Location  = new Point(x, y),
-                Size      = new Size(width, 20),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
-                Font      = new Font("Segoe UI", 8.5f),
-                ForeColor = ClrMuted,
-                BackColor = Color.Transparent
-            };
+        private static Label FL(string text, int x, int y, int width)
+            => new Label { Text = text, Location = new Point(x, y), Size = new Size(width, 20), TextAlign = System.Drawing.ContentAlignment.MiddleLeft, Font = new Font("Segoe UI", 8.5f), ForeColor = ClrMuted, BackColor = Color.Transparent };
 
         private static Label MakeStatusLabel(int x, int y, int width)
-            => new Label
-            {
-                Text      = "",
-                Location  = new Point(x, y),
-                Size      = new Size(width, 16),
-                Font      = new Font("Segoe UI", 7.5f),
-                ForeColor = ClrMuted,
-                BackColor = Color.Transparent
-            };
+            => new Label { Text = "", Location = new Point(x, y), Size = new Size(width, 16), Font = new Font("Segoe UI", 7.5f), ForeColor = ClrMuted, BackColor = Color.Transparent };
 
         private static TextBox MakeTextBox(int x, int y, int width)
-            => new TextBox
-            {
-                Location    = new Point(x, y),
-                Size        = new Size(width, 22),
-                BackColor   = ClrInput,
-                ForeColor   = ClrInputFg,
-                BorderStyle = BorderStyle.FixedSingle
-            };
+            => new TextBox { Location = new Point(x, y), Size = new Size(width, 22), BackColor = ClrInput, ForeColor = ClrInputFg, BorderStyle = BorderStyle.FixedSingle };
 
         private static ComboBox MakeYNCombo(int x, int y, int width)
         {
-            var cbo = new ComboBox
-            {
-                Location      = new Point(x, y),
-                Size          = new Size(width, 22),
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                BackColor     = ClrInput,
-                ForeColor     = ClrInputFg
-            };
-            cbo.Items.AddRange(new object[] { "Y", "N" });
-            return cbo;
+            var c = new ComboBox { Location = new Point(x, y), Size = new Size(width, 22), DropDownStyle = ComboBoxStyle.DropDownList, BackColor = ClrInput, ForeColor = ClrInputFg };
+            c.Items.AddRange(new object[] { "Y", "N" });
+            return c;
+        }
+
+        private static ComboBox MakeAONCombo(int x, int y, int width)
+        {
+            var c = new ComboBox { Location = new Point(x, y), Size = new Size(width, 22), DropDownStyle = ComboBoxStyle.DropDownList, BackColor = ClrInput, ForeColor = ClrInputFg };
+            c.Items.AddRange(new object[] { "A", "O", "N" });
+            return c;
+        }
+
+        private static ComboBox Make012Combo(int x, int y, int width)
+        {
+            var c = new ComboBox { Location = new Point(x, y), Size = new Size(width, 22), DropDownStyle = ComboBoxStyle.DropDownList, BackColor = ClrInput, ForeColor = ClrInputFg };
+            c.Items.AddRange(new object[] { "0", "1", "2" });
+            return c;
         }
 
         private static ComboBox MakeTFCombo(int x, int y, int width)
         {
-            var cbo = new ComboBox
-            {
-                Location      = new Point(x, y),
-                Size          = new Size(width, 22),
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                BackColor     = ClrInput,
-                ForeColor     = ClrInputFg
-            };
-            cbo.Items.AddRange(new object[] { "True", "False" });
-            return cbo;
+            var c = new ComboBox { Location = new Point(x, y), Size = new Size(width, 22), DropDownStyle = ComboBoxStyle.DropDownList, BackColor = ClrInput, ForeColor = ClrInputFg };
+            c.Items.AddRange(new object[] { "True", "False" });
+            return c;
         }
 
         private static Button MakeSaveButton(string text, int x, int y)
-            => new Button
+            => new Button { Text = text, Location = new Point(x, y), Size = new Size(220, 36), BackColor = Color.FromArgb(31, 111, 235), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9.5f, FontStyle.Bold), Cursor = Cursors.Hand };
+
+        private static void AddCashBackGrid(Panel card, Dictionary<int, TextBox> dict, string prefix, int start, int end)
+        {
+            int[] xs = { 12, 190, 368, 546 };
+            int labelW = 96, inputW = 58, rowH = 26;
+            int row = 0, col = 0;
+            for (int i = start; i <= end; i++)
             {
-                Text      = text,
-                Location  = new Point(x, y),
-                Size      = new Size(200, 36),
-                BackColor = Color.FromArgb(31, 111, 235),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font      = new Font("Segoe UI", 9.5f, FontStyle.Bold),
-                Cursor    = Cursors.Hand
-            };
+                int y  = 30 + row * rowH;
+                int x  = xs[col];
+                var tb = MakeTextBox(x + labelW + 2, y, inputW);
+                dict[i] = tb;
+                card.Controls.Add(FL(prefix + i + ":", x, y + 2, labelW));
+                card.Controls.Add(tb);
+                col++;
+                if (col >= 4) { col = 0; row++; }
+            }
+        }
     }
 }
