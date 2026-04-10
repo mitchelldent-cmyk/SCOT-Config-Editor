@@ -9,7 +9,7 @@ namespace SCOTConfigEditor.UI
 {
     public partial class MainForm : Form
     {
-        private const string ConfigBase = @"C:\scot\config";
+        private string ConfigBase => txtConfigPath.Text.TrimEnd('\\', '/');
 
         private IniFile     _ini000;
         private IniFile     _iniDat;

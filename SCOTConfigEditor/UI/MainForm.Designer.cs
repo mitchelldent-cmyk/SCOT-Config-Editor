@@ -19,6 +19,9 @@ namespace SCOTConfigEditor.UI
         private static readonly Color ClrAccent   = Color.FromArgb( 88, 166, 255);
         private static readonly Color ClrBorder   = Color.FromArgb( 48,  54,  61);
 
+        // ── Path bar ─────────────────────────────────────────────────────────────
+        private TextBox txtConfigPath;
+
         // ── Navigation ────────────────────────────────────────────────────────────
         private readonly List<Panel>  _navPanels  = new List<Panel>();
         private readonly List<Panel>  _navAccents = new List<Panel>();
@@ -116,11 +119,57 @@ namespace SCOTConfigEditor.UI
                 Anchor    = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
 
+            // ── Path bar ─────────────────────────────────────────────────────────
+            var pnlPathBar = new Panel
+            {
+                Location  = new Point(0, 57),
+                Size      = new Size(880, 34),
+                BackColor = ClrSurface,
+                Anchor    = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+            pnlPathBar.Controls.Add(new Label
+            {
+                Text      = "Config Path:",
+                Location  = new Point(12, 0),
+                Size      = new Size(82, 34),
+                Font      = new Font("Segoe UI", 8.5f),
+                ForeColor = ClrMuted,
+                BackColor = Color.Transparent,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+            });
+            txtConfigPath = new TextBox
+            {
+                Location    = new Point(98, 7),
+                Size        = new Size(670, 22),
+                BackColor   = ClrInput,
+                ForeColor   = ClrInputFg,
+                BorderStyle = BorderStyle.FixedSingle,
+                Text        = @"C:\scot\config"
+            };
+            txtConfigPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            var btnReload = new Button
+            {
+                Text      = "Reload",
+                Location  = new Point(776, 6),
+                Size      = new Size(90, 22),
+                BackColor = ClrSurface2,
+                ForeColor = ClrMuted,
+                FlatStyle = FlatStyle.Flat,
+                Font      = new Font("Segoe UI", 8f),
+                Cursor    = Cursors.Hand,
+                Anchor    = AnchorStyles.Top | AnchorStyles.Right
+            };
+            btnReload.FlatAppearance.BorderColor = ClrBorder;
+            btnReload.Click += (s, e) => LoadAll();
+            txtConfigPath.KeyDown += (s, e) => { if (e.KeyCode == Keys.Return) LoadAll(); };
+            pnlPathBar.Controls.Add(txtConfigPath);
+            pnlPathBar.Controls.Add(btnReload);
+
             // ── Left nav (160px) ─────────────────────────────────────────────────
             var pnlNav = new Panel
             {
-                Location  = new Point(0, 57),
-                Size      = new Size(160, 663),
+                Location  = new Point(0, 91),
+                Size      = new Size(160, 629),
                 BackColor = ClrSurface2,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
             };
@@ -165,8 +214,8 @@ namespace SCOTConfigEditor.UI
             // ── Content area ─────────────────────────────────────────────────────
             var pnlContentArea = new Panel
             {
-                Location  = new Point(160, 57),
-                Size      = new Size(720, 663),
+                Location  = new Point(160, 91),
+                Size      = new Size(720, 629),
                 BackColor = ClrBack,
                 Anchor    = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -177,7 +226,7 @@ namespace SCOTConfigEditor.UI
                 var cp = new Panel
                 {
                     Location   = new Point(0, 0),
-                    Size       = new Size(720, 663),
+                    Size       = new Size(720, 629),
                     AutoScroll = true,
                     BackColor  = ClrBack,
                     Anchor     = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
@@ -195,7 +244,7 @@ namespace SCOTConfigEditor.UI
 
             ActivateNav(0);
 
-            this.Controls.AddRange(new Control[] { pnlHeader, pnlAccentLine, pnlNav, pnlContentArea });
+            this.Controls.AddRange(new Control[] { pnlHeader, pnlAccentLine, pnlPathBar, pnlNav, pnlContentArea });
             this.ResumeLayout(false);
         }
 
